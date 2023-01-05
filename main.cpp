@@ -22,11 +22,11 @@ public:
     bool completed = false;
     SudokuBoardLogic() {};
     bool AssignBoard(int board);
-    void PlayerInput(int& number, int& collumn, int& row);
+    void PlayerInput(int& number, int& column, int& row);
     bool CheckCompleted();
-    void RemoveValues(int& collumn, int& row);
+    void RemoveValues(int& column, int& row);
     void ListOfRemoveables();
-    bool NumCheck(int& randNum, int& row, int& collumn);
+    bool NumCheck(int& randNum, int& row, int& column);
     void ShowBoard();
 private:
     list<int> availableNumbers;
@@ -66,9 +66,9 @@ private:
         6, 9, 4, 7, 3, 8, 2, 1, 5,
         3, 2, 8, 5, 6, 1, 7, 4, 9,
     };
-    bool CollumnNumberReturn(int& randNum, const int& collumn);
+    bool ColumnNumberReturn(int& randNum, const int& column);
     bool RowNumberReturn(int& randNum, const int& row);
-    bool SquareNumberReturn(int& randNum, const int& intervalRow, const int& intervalCollumn);
+    bool SquareNumberReturn(int& randNum, const int& intervalRow, const int& intervalColumn);
     void AddBlanks();
 };
 
@@ -78,20 +78,20 @@ bool SudokuBoardLogic::RowNumberReturn(int& randNum, const int& row) {
     for (int i = 0; i < 9; i++) {
         if (pointer[i].number == randNum)
         {
-            cout << "(Row) Number " << pointer[i].number << " on row " << row << " and collumn " << i << " equal to randNum " << randNum << "\n";
+            cout << "(Row) Number " << pointer[i].number << " on row " << row << " and column " << i << " equal to randNum " << randNum << "\n";
             return false;
         }
     }
     return true;
 }
 
-// Checks the collumn provided to see if any numbers overlap
-bool SudokuBoardLogic::CollumnNumberReturn(int& randNum, const int& collumn) {
+// Checks the column provided to see if any numbers overlap
+bool SudokuBoardLogic::ColumnNumberReturn(int& randNum, const int& column) {
     for (int i = 0; i < 9; i++) {
         pointer = &currentBoard[i * 9];
-        if (pointer[collumn].number == randNum) 
+        if (pointer[column].number == randNum) 
         {
-            cout << "(Collumn) Number " << pointer[i * 9].number << " on row " << i << " and collumn " << collumn << " equal to randNum " << randNum << "\n";
+            cout << "(Column) Number " << pointer[i * 9].number << " on row " << i << " and column " << column << " equal to randNum " << randNum << "\n";
             return false;
         }
     }
@@ -99,8 +99,8 @@ bool SudokuBoardLogic::CollumnNumberReturn(int& randNum, const int& collumn) {
 }
 
 // Checks the square the number exists within to see if any numbers overlap
-bool SudokuBoardLogic::SquareNumberReturn(int& randNum, const int& row, const int& collumn) {
-    int intervalRow, intervalCollumn;
+bool SudokuBoardLogic::SquareNumberReturn(int& randNum, const int& row, const int& column) {
+    int intervalRow, intervalColumn;
 
     // Finds out the positions needed to check for the square
     if (row < 3) {
@@ -113,23 +113,23 @@ bool SudokuBoardLogic::SquareNumberReturn(int& randNum, const int& row, const in
         intervalRow = 9;
     }
 
-    if (collumn < 3) {
-        intervalCollumn = 3;
+    if (column < 3) {
+        intervalColumn = 3;
     }
-    else if (collumn < 6) {
-        intervalCollumn = 6;
+    else if (column < 6) {
+        intervalColumn = 6;
     }
     else {
-        intervalCollumn = 9;
+        intervalColumn = 9;
     }
 
     // Checks the sqaure using the positions provided
     for (int i = (intervalRow - 3); i < intervalRow; i++) {
         pointer = &currentBoard[i * 9];
-        for (int i2 = (intervalCollumn - 3); i2 < intervalCollumn; i2++) {
+        for (int i2 = (intervalColumn - 3); i2 < intervalColumn; i2++) {
             if (pointer[i2].number == randNum)
             {
-                cout << "(Square)Number " << pointer[i2].number << " on row " << i << " and collumn " << i2 << " equal to randNum " << randNum << "\n";
+                cout << "(Square)Number " << pointer[i2].number << " on row " << i << " and column " << i2 << " equal to randNum " << randNum << "\n";
                 return false;
             }
         }
@@ -137,13 +137,13 @@ bool SudokuBoardLogic::SquareNumberReturn(int& randNum, const int& row, const in
     return true;
 }
 
-// Performs all the basic checks for a number. Returns false if the number already exists in the row, collumn or square. Returns true if not.
-bool SudokuBoardLogic::NumCheck(int& randNum, int& row, int& collumn) {
+// Performs all the basic checks for a number. Returns false if the number already exists in the row, column or square. Returns true if not.
+bool SudokuBoardLogic::NumCheck(int& randNum, int& row, int& column) {
     if (RowNumberReturn(randNum, row) == false)
         return false;
-    if (CollumnNumberReturn(randNum, collumn) == false)
+    if (ColumnNumberReturn(randNum, column) == false)
         return false;
-    if (SquareNumberReturn(randNum, row, collumn) == false)
+    if (SquareNumberReturn(randNum, row, column) == false)
         return false;
 
     return true;
@@ -180,9 +180,9 @@ bool SudokuBoardLogic::AssignBoard(int board) {
 
 }
 
-// Takes the inputted number, row and collumn given by the player. Runs checks to see if the number can fit into the board and if so places it there
-void SudokuBoardLogic::PlayerInput(int& number, int& collumn, int& row) {
-    if (collumn < 1 || collumn > 9) {
+// Takes the inputted number, row and column given by the player. Runs checks to see if the number can fit into the board and if so places it there
+void SudokuBoardLogic::PlayerInput(int& number, int& column, int& row) {
+    if (column < 1 || column > 9) {
         cout << "Please enter a number within 1 - 9 \n\n";
         return;
     }
@@ -191,16 +191,16 @@ void SudokuBoardLogic::PlayerInput(int& number, int& collumn, int& row) {
         return;
     }
 
-    collumn -= 1;
+    column -= 1;
     row -= 1;
     sudokuNumbers* playerPointer = &currentBoard[row * 9];
-    if (NumCheck(number, row, collumn) == false || playerPointer[collumn].number != 0) { // Check over this, it should probably be OR instead of AND
+    if (NumCheck(number, row, column) == false || playerPointer[column].number != 0) { // Check over this, it should probably be OR instead of AND
         cout << "Number can't be placed there \n";
         return;
     }
     else {
-        playerPointer[collumn].number = number;
-        playerPointer[collumn].solid = false;
+        playerPointer[column].number = number;
+        playerPointer[column].solid = false;
         ShowBoard();
         return;
     }
@@ -218,9 +218,9 @@ bool SudokuBoardLogic::CheckCompleted() {
     return true;
 }
 
-// Takes the inputted row and collumn given by the player. Runs checks to see if the number there can be removed and if so removes it
-void SudokuBoardLogic::RemoveValues(int& collumn, int& row) {
-    if (collumn < 1 || collumn > 9) {
+// Takes the inputted row and column given by the player. Runs checks to see if the number there can be removed and if so removes it
+void SudokuBoardLogic::RemoveValues(int& column, int& row) {
+    if (column < 1 || column > 9) {
         cout << "Please enter a number within 1 - 9 \n\n";
         return;
     }
@@ -229,15 +229,15 @@ void SudokuBoardLogic::RemoveValues(int& collumn, int& row) {
         return;
     }
 
-    collumn -= 1;
+    column -= 1;
     row -= 1;
     pointer = &currentBoard[row * 9];
-    if (pointer[collumn].solid == true) {
+    if (pointer[column].solid == true) {
         cout << "Number can't be removed \n";
     }
     else {
-        cout << "Removing number " << pointer[collumn].number << " at collumn " << (collumn + 1) << " and row " << (row + 1) << "\n\n";
-        pointer[collumn].number = 0;
+        cout << "Removing number " << pointer[column].number << " at column " << (column + 1) << " and row " << (row + 1) << "\n\n";
+        pointer[column].number = 0;
         ShowBoard();
     }
 }
@@ -248,7 +248,7 @@ void SudokuBoardLogic::ListOfRemoveables() {
         pointer = &currentBoard[i * 9];
         for (int i2 = 0; i2 < 9; i2++) {
             if (pointer[i2].solid != true && pointer[i2].number != 0)
-                cout << "Number: " << pointer[i2].number << " on collumn " << (i2 + 1) << " and row " << (i + 1) << "\n";
+                cout << "Number: " << pointer[i2].number << " on column " << (i2 + 1) << " and row " << (i + 1) << "\n";
         }
     }
 }
@@ -282,7 +282,7 @@ void SudokuBoardLogic::AddBlanks() {
                 }
                 else {
                     int randNum = rand() % 100 + 1;
-                    if (randNum > 35) { // 65% chance to leave it blank
+                    if (randNum > 40) { // 60% chance to leave it blank
                         pointer[i2].number = 0;
                         blanks++;
                     }
@@ -324,17 +324,17 @@ int main()
     SudokuBoardLogic sudokuBoard;
     string stringInput;
     int intInput = 0;
-    int number, row, collumn;
+    int number, row, column;
 
     cout << "\n";
 
 
     cout <<
         "1) Help - Brings up the commands \n"
-        "2) Reset - Resets the board \n"
+        "2) Play - Begins the game \n"
         "3) Add - Adds a number to the board \n"
         "4) Remove - Removes a number from the board \n"
-        "5) List (Removes) - Proivdes a list of numbers that can be removed and what row and collumn \n"
+        "5) List (Removes) - Proivdes a list of numbers that can be removed and what row and column \n"
         "6) Show - Shows the current board \n"
         "7) Quit - Quits the application \n\n";
 
@@ -361,7 +361,7 @@ int main()
                     "2) Play - Begins the game \n"
                     "3) Add - Adds a number to the board \n"
                     "4) Remove - Removes a number from the board \n"
-                    "5) List (Removes) - Provides a list of numbers that can be removed and what row and collumn \n"
+                    "5) List (Removes) - Provides a list of numbers that can be removed and what row and column \n"
                     "6) Show - Shows the current board \n"
                     "7) Quit - Quits the application \n\n";
                 break;
@@ -404,12 +404,12 @@ int main()
                     
                 cout << "Enter what number you would like to enter (1 - 9) \n";
                 cin >> number;
-                cout << "Enter the collumn (1 - 9)\n";
-                cin >> collumn;
+                cout << "Enter the column (1 - 9)\n";
+                cin >> column;
                 cout << "Enter the row (1 - 9)\n";
                 cin >> row;
-                cout << "Placing number " << number << " at collumn " << collumn << " and row " << row << "\n\n";
-                sudokuBoard.PlayerInput(number, collumn, row);
+                cout << "Placing number " << number << " at column " << column << " and row " << row << "\n\n";
+                sudokuBoard.PlayerInput(number, column, row);
                 if (sudokuBoard.CheckCompleted() == true)
                     sudokuBoard.completed = true;
                 cout << "\n";
@@ -421,11 +421,11 @@ int main()
                     break;
                 }
 
-                cout << "Enter the collumn (0 - 8)\n";
-                cin >> collumn;
+                cout << "Enter the column (0 - 8)\n";
+                cin >> column;
                 cout << "Enter the row (0 - 8)\n";
                 cin >> row;
-                sudokuBoard.RemoveValues(collumn, row);
+                sudokuBoard.RemoveValues(column, row);
                 cout << "\n";
                 break;
 
